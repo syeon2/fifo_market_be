@@ -2,6 +2,10 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.5.0'
     id 'io.spring.dependency-management' version '1.1.7'
+
+    // code convention
+    id 'org.ec4j.editorconfig' version '0.1.0'
+    id 'checkstyle'
 }
 
 group = 'proj.syeon2'
@@ -23,6 +27,17 @@ repositories {
     mavenCentral()
 }
 
+editorconfig {
+    excludes = ['build']
+}
+
+checkstyle {
+    maxWarnings = 0
+    configFile = file("${rootDir}/config/checkstyle/naver-checkstyle-rules.xml")
+    configProperties = ["suppressionFile": "${rootDir}/config/checkstyle/naver-checkstyle-suppressions.xml"]
+    toolVersion = "8.42"
+}
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -30,6 +45,18 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('check') {
+    dependsOn('editorconfigCheck')
+}
+
+tasks.named('compileJava') {
+    options.encoding('UTF-8')
+}
+
+tasks.named('compileTestJava') {
+    options.encoding('UTF-8')
 }
 
 tasks.named('test') {
